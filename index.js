@@ -44,10 +44,10 @@ async function run() {
     app.get('/users', async (req, res) => {
       const result = await usersCollection.find().toArray();
       res.send(result);
-    })
+    });
 
 
-
+    // insert user if he dont exist
     app.post('/users', async(req, res) => {
       const user = req.body;
       // console.log(user);
@@ -59,7 +59,21 @@ async function run() {
       }
       const result = await usersCollection.insertOne(user);
       res.send(result);
-    })
+    });
+
+
+    // Making user to admin
+    app.patch('/users/admin/:id' , async(req, res) => {
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)};
+      const updateDoc = {
+        $set: {
+          role : 'admin'
+        },
+      };
+      const result = await usersCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    });
 
 
 
@@ -67,13 +81,13 @@ async function run() {
     app.get('/menu', async(req, res) => {
         const result = await menuCollection.find().toArray();
         res.send(result)
-    })
+    });
 
     //review related apis
     app.get('/reviews', async(req, res) => {
         const result = await reviewCollection.find().toArray();
         res.send(result)
-    })
+    });
 
 
     // cart collection apis
@@ -86,14 +100,14 @@ async function run() {
       const query = {email: email};
       const result = await cartCollection.find(query).toArray();
       res.send(result);
-    })
+    });
 
     //----insert item-----
     app.post('/carts', async(req, res) => {
       const item = req.body;
       const result = await cartCollection.insertOne(item);
       res.send(result)
-    })
+    });
 
 
     // delete particular item
@@ -102,7 +116,7 @@ async function run() {
       const query = { _id: new ObjectId(id)};
       const result = await cartCollection.deleteOne(query);
       res.send(result);
-    }) 
+    });
 
 
 
