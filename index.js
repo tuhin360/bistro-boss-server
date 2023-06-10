@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const app = express()
@@ -37,8 +38,15 @@ async function run() {
     const cartCollection = client.db("bistroDb").collection("carts");
 
 
+    //create jwt token
+    app.post('/jwt', (req, res) => {
+      const user = req.body;
+      const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
+      res.send({token})
+    });
 
-    //users related apis
+
+    //USER RELATED APIS:
     
     // Getting all users from DB
     app.get('/users', async (req, res) => {
@@ -47,7 +55,7 @@ async function run() {
     });
 
 
-    // insert user if he dont exist
+    // insert user if he don't exist
     app.post('/users', async(req, res) => {
       const user = req.body;
       // console.log(user);
@@ -64,7 +72,8 @@ async function run() {
 
     // Making user to admin
     app.patch('/users/admin/:id' , async(req, res) => {
-      const id = req.params.id;
+      const id = req.params.id.trim();
+      console.log(id);
       const filter = {_id: new ObjectId(id)};
       const updateDoc = {
         $set: {
