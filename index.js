@@ -61,6 +61,7 @@ async function run() {
       res.send({ token });
     });
 
+    
     //USER RELATED APIS:
 
     // Getting all users from DB
