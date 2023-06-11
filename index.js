@@ -134,11 +134,21 @@ async function run() {
       res.send(result);
     });
 
+
+
     //menu related apis
     app.get("/menu", async (req, res) => {
       const result = await menuCollection.find().toArray();
       res.send(result);
     });
+
+    // add new item
+    app.post('/menu', verifyJWT, verifyAdmin, async(req, res) => {
+      const newItem = req.body;
+      const result = await menuCollection.insertOne(newItem);
+      res.send(result);
+    })
+
 
     //review related apis
     app.get("/reviews", async (req, res) => {
