@@ -230,8 +230,24 @@ async function run() {
       res.send({insertResult, deleteResult});
     })
 
+    // Create Admin dashboard stats api and load data
+    app.get('/admin-stats', verifyJWT, verifyAdmin, async(req, res) => {
+      const users = await usersCollection.estimatedDocumentCount();
+      const products = await menuCollection.estimatedDocumentCount();
+      const orders = await paymentCollection.estimatedDocumentCount();
 
+      // best way to get sum of the field is to use group and sum operator
 
+      const payments = await paymentCollection.find().toArray();
+      const revenue = payments.reduce((sum, payment) => sum + payment.price, 0).toFixed(2);
+
+      res.send({
+        users,
+        products,
+        orders,
+        revenue
+      });
+    })
 
 
 
